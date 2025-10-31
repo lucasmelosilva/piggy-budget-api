@@ -1,26 +1,26 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('users')
+@Entity({ name: 'users' })
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
-  @Column({ unique: true })
+  @Column({ name: 'username', nullable: false, unique: true })
   username: string;
 
-  @Column({ unique: true })
+  @Column({ name: 'email', nullable: false, unique: true })
   email: string;
 
-  @Column()
+  @Column({ name: 'password', nullable: false })
   password: string;
 
-  @Column()
+  @Column({ name: 'name', nullable: false })
   name: string;
 
-  @Column()
+  @Column({ name: 'last_name', nullable: true })
   lastName: string;
 
-  @Column({ default: '' })
+  @Column({ nullable: true, default: '' })
   imageUrl: string;
 
   @Column({ default: false })
