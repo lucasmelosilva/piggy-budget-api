@@ -20,12 +20,9 @@ export class UserEntity {
   @Column({ name: 'last_name', nullable: true })
   lastName: string;
 
-  @Column({ nullable: true, default: '' })
+  @Column({ name: 'image_url', nullable: true, default: '' })
   imageUrl: string;
 
-  @Column({ default: false })
-  isVerified: boolean;
-
-  @Column({ default: '' })
-  accessToken: string;
+  @Column({ name: 'is_email_verified', default: false })
+  isEmailVerified: boolean;
 }
