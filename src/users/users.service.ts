@@ -12,7 +12,9 @@ export class UsersService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async create(createUserDTO: CreateUserDTO): Promise<UserEntity> {
+  async create(
+    createUserDTO: CreateUserDTO,
+  ): Promise<Omit<UserEntity, 'password'>> {
     const user = {
       ...createUserDTO,
       password: await bcrypt.hash(createUserDTO.password, 10),
@@ -20,16 +22,11 @@ export class UsersService {
     const result = await this.userRepository.save(user);
     // eslint-disable-next-line
     const { password, ...userWithoutPassword } = result;
-    return userWithoutPassword as UserEntity;
+    return userWithoutPassword;
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
     const user = await this.userRepository.findOne({ where: { email } });
-    return user;
-  }
-
-  async findByUsername(username: string): Promise<UserEntity | null> {
-    const user = await this.userRepository.findOne({ where: { username } });
     return user;
   }
 
