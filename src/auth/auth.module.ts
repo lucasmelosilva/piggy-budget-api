@@ -3,9 +3,21 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { UsersModule } from 'src/users/users.module';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [UsersModule],
+  imports: [
+    ConfigModule.forRoot(),
+    UsersModule,
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_TOKEN_SECRET,
+      signOptions: {
+        expiresIn: '7d',
+      },
+    }),
+  ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy],
 })
