@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import { MailError } from 'src/errors/mail-error';
+import { makeEmailValidatorTemplate } from './templates/email/email-validator.template';
 
 @Injectable()
 export class MailService {
@@ -17,22 +19,20 @@ export class MailService {
         pass: process.env.MAIL_PASS,
       },
     });
-
-    this.logger.log('MailService initialized');
   }
 
   async sendEmailVerification(
+    name: string,
     email: string,
     token: string,
-  ): Promise<void | Error> {
+  ): Promise<void> {
     const url = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
     try {
       await this.transporter.sendMail({
         from: `No Reply <${process.env.MAIL_USER}>`,
         to: email,
         subject: 'Email Verification',
-        html: `<p>Please verify your email by clicking on the link below:</p>
-               <a href="${url}">Verify Email</a>`,
+        html: makeEmailValidatorTemplate(name, url),
       });
       this.logger.log(`Email verification sent to ${email}`);
     } catch (error) {
@@ -40,6 +40,7 @@ export class MailService {
         // eslint-disable-next-line
         `Failed to send email verification to ${email}: ${error.message}`,
       );
+      throw new MailError('Failed to send email verification.');
     }
   }
 }

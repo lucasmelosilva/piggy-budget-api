@@ -1,4 +1,9 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { UserEntity } from 'src/users/users.entity';
@@ -10,6 +15,8 @@ import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger();
+
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
@@ -59,10 +66,32 @@ export class AuthService {
       name: user.name,
     };
     const jwtToken = this.jwtService.sign(payload, {
-      expiresIn: '4h',
+      expiresIn: '1h',
       secret: process.env.SECRET_EMAIL_VERIFICATION_TOKEN as string,
     });
-    await this.mailService.sendEmailVerification(user.email, jwtToken);
+
     await this.usersService.create(user);
+
+    // Enviando email de verificação em background
+    this.mailService
+      .sendEmailVerification(user.name, user.email, jwtToken)
+      .catch((error) => {
+        // Log do erro para monitoramento, mas não bloqueia o fluxo
+        this.logger.error('Failed to send verification email:', error);
+        // TODO: Adicionar à fila de reenvio de emails
+      });
+
+    return {
+      message:
+        'User created successfully. Please check your email for verification.',
+    };
+  }
+
+  async verifyEmail(email: string) {
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+    await this.usersService.emailVerified(user.id);
   }
 }
