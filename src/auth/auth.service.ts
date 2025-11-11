@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
-import { UserEntity } from 'src/users/users.entity';
+import { User } from 'src/users/user.entity';
 import { UserPayload } from './model/UserPayload';
 import { JwtService } from '@nestjs/jwt';
 import { UserToken } from './model/UserToken';
@@ -23,7 +23,7 @@ export class AuthService {
     private readonly mailService: MailService,
   ) {}
 
-  private makePayload(user: UserEntity): UserPayload {
+  private makePayload(user: User): UserPayload {
     return {
       sub: user.id,
       email: user.email,
@@ -31,7 +31,7 @@ export class AuthService {
     };
   }
 
-  login(user: UserEntity): UserToken {
+  login(user: User): UserToken {
     const payload: UserPayload = this.makePayload(user);
 
     const jwtToken = this.jwtService.sign(payload);
