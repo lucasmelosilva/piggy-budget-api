@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
-import { MailError } from 'src/errors/mail-error';
+import { MailError } from 'src/mail/errors/mail-error';
 import { makeEmailValidatorTemplate } from './templates/email/email-validator.template';
 
 @Injectable()
