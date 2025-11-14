@@ -5,6 +5,8 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { CategoriesModule } from './categories/categories.module';
+import { BudgetFlowModule } from './budget-flow/budget-flow.module';
+import { BudgetFlowModule } from './budget-flow/budget-flow.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -24,6 +26,7 @@ import { CategoriesModule } from './categories/categories.module';
     }),
     AuthModule,
     CategoriesModule,
+    BudgetFlowModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
