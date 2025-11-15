@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Unique,
@@ -21,10 +22,11 @@ export class Category {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ name: 'user_id' })
   userId: string;
 
   @ManyToOne(() => User, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @Column({ default: 'Salario' })
